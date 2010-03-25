@@ -1,0 +1,30 @@
+use 5.006;
+use strict;
+use warnings;
+use ExtUtils::MakeMaker;
+
+WriteMakefile(
+    EXE_FILES		=> [ 'nam' ],
+    NAME                => 'File::Namaste',
+    AUTHOR              => 'John A. Kunze <jak@ucop.edu>',
+    VERSION_FROM        => 'VERSION',
+    ABSTRACT_FROM       => 'lib/File/Namaste.pm',
+    ($ExtUtils::MakeMaker::VERSION >= 6.3002
+      ? ('LICENSE'=> 'Apache2')
+      : ()),
+    PM			=> {
+	'lib/File/Namaste.pm'	=> 'blib/lib/File/Namaste.pm',
+    },
+    PL_FILES            => {},
+    PREREQ_PM => {
+	'Getopt::Long'	=> 0,
+	'Pod::Usage'	=> 0,
+	'File::Spec'	=> 0,
+	'File::Value'	=> 0.17,
+	'File::ANVL'	=> 0.16,
+	'File::ERC'	=> 0.03,
+    },
+    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+    clean               => { FILES => 'File-Namaste-*' },
+);
+
