@@ -1,7 +1,16 @@
 #!/usr/bin/perl
 
 # .=who? xxx
-# num2label xxxx
+# xxx num2label
+# xxx list labels
+# xxx list dir_types
+# Additional types will be defined and may be submitted by sending email
+# to the author.  Submissions should conform to these guidelines to reduce
+# the need for lossy transformation when creating the
+# <spanx style="emph">tvalue</spanx>:  proposed strings
+# (<spanx style="emph">fvalue</spanx>s) should not exceed 16 characters in
+# length and should contain only letters, digits, underscores, periods, and
+# hyphens.
 
 use 5.006;
 use strict;
@@ -119,6 +128,9 @@ my %opt = (
 	pod2usage("$cmd: unrecognized command");
 }
 
+# One of the main benefits of this help text is to make it easy to find
+# out what the numeric assignments are.  Absent a command for tracking
+# the current assignments, it is a priority to track them here.
 sub help {
 	print << 'EOI';
 

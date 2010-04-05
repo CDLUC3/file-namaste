@@ -151,8 +151,6 @@ sub nam_get {
 }
 
 # xxx unicode friendly??
-#
-# XXXX test with \n in string???
 our $max_default = 16;		# is there some sense to this? xxx use
 				# fraction of display width maybe?
 
@@ -190,6 +188,7 @@ sub nam_elide { my( $s, $max, $ellipsis )=@_;
 	#   if "e" then s/^(.....).*$/$1$ellipsis/
 	#   if "s" then s/^.*(.....)$/$ellipsis$1/
 	#   if "m" then s/^.*(...).*(..)$/$1$ellipsis$2/
+	# In order to make '.' match \n, we use the 's' modifier.
 	if ($where eq "m") {
 		# if middle, we split the string
 		my $half = int($left / 2);
@@ -198,16 +197,16 @@ sub nam_elide { my( $s, $max, $ellipsis )=@_;
 		$re = "^(" . ("." x $half) . ").*("
 			. ("." x ($left - $half)) . ")\$";
 			# $left - $half might be zero, but this still works
-		$retval =~ s/$re/$1$ellipsis$2/;
+		$retval =~ s/$re/$1$ellipsis$2/s;
 	}
 	else {
 		my $dots = "." x $left;
 		$re = ($where eq "e" ? "^($dots).*\$" : "^.*($dots)\$");
 		if ($where eq "e") {
-			$retval =~ s/$re/$1$ellipsis/;
+			$retval =~ s/$re/$1$ellipsis/s;
 		}
 		else {			# else "s"
-			$retval =~ s/$re/$ellipsis$1/;
+			$retval =~ s/$re/$ellipsis$1/s;
 		}
 	}
 	return $retval;
