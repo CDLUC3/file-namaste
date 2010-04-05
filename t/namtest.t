@@ -176,6 +176,10 @@ $x = `$cmd get -v 4`;
 chop($x);chop($x);
 like $x, '/4=a.b c d .x.x=x.x.x.x.x.x.x/', 'garbage tvalue with --portable';
 
+$x = `$cmd elide 'The question is this: why and/or how?' 24s '**'`;
+chop($x);chop($x);
+is $x, '** this: why and/or how?', 'raw interface to elide';
+
 remove_td();
 
 }

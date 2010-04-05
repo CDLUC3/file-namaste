@@ -1,8 +1,6 @@
 #!/usr/bin/perl
 
-# xxx do
-#nam set - 'lksdljdlj' 14m ellipsis  # just to surface elide to command line
-# .=...
+# .=who? xxx
 
 use 5.006;
 use strict;
@@ -124,33 +122,27 @@ my %opt = (
 sub help {
 	print << 'EOI';
 
-nam - set, get, and remove Namaste (NAMe-AS-TExt) tag files
+nam - manage Namaste (NAMe-AS-TExt) tag files for describing directories
 
 Usage:
-  nam set N string [[maxlen] ellipsis]
-  nam add N string [[maxlen] ellipsis]
-  nam get [N ...]
-  nam rm  [N ...]
-  nam rmall
-  nam elide string [[maxlen] ellipsis]
+     nam [options] set|add N string [[maxlen] ellipsis]
+     nam [options] get|rm [N ...]
+     nam [options] rmall
+     nam elide string [[maxlen] ellipsis]
 
-Example:
-  $ nam set 0 pairtree_0.99
-  nam get 0
+A Namaste tag file holds a single metadata value and its filename is derived
+from that value.  N specifies Dublin Core Kernel metadata elements, roughly:
 
-A Namaste tag file holds a single metadata value and its filename is
-derived from the metadata value.
-Options include 
+     0   dir_type   directory type (e.g., bagit_0.97)
+     1    who       creator (or contributor or publisher)
+     2    what      title
+     3    when      date of creation or last revision
+     4    where     machine-oriented identifier
 
-The integers correspond to simple metadata as per Dublin Core Kernel
-Metadata, roughly as follows:
-
-  0   dir_type   directory type
-  1    who       creator (or contributor or publisher)
-  2    what      title
-  3    when      date of creation or last revision
-  4    where     machine-oriented identifier
-
+Commands (set, add, get, rm) act as you would expect, but "rmall" removes
+all tags and "elide" just returns an elided string, operating on no files.
+Use the "-d directory" option for tag files not in the current directory.
+See "nam --man" for full documentation.
 
 EOI
 	return 1;
@@ -181,6 +173,8 @@ nam - set, get, and remove Namaste tag files
 =item B<nam> [I<options>] B<rm> [I<N> ...]
 
 =item B<nam> [I<options>] B<rmall>
+
+=item B<nam> [I<options>] B<elide> I<string> [[I<maxlen>] I<ellipsis>]
 
 =back
 
@@ -222,9 +216,9 @@ instruction or when notifying the collection manager of a system
 exception).
 
 The integers correspond to simple metadata as per Dublin Core Kernel
-Metadata, roughly as follows:
+metadata, roughly as follows:
 
-  0   dir_type   directory type
+  0   dir_type   directory type (e.g., bagit_0.97)
   1    who       creator (or contributor or publisher)
   2    what      title
   3    when      date of creation or last revision
@@ -266,6 +260,12 @@ with "16s" truncation, the last line of the listing would look like
 
   4=..3960=t50g49p5m  m_djvu.txt  m_marc.xml   m.pdf
 
+Additional tags corresponding to an existing tag number can be created
+with B<add> (but all tags for a given number are replaced with B<set>):
+
+  $ nam add 2 Lennon
+  $ nam add 2 McCartney
+
 The verbatim metadata value (unabbreviated and not transformed to comply
 with filesystem naming rules) is stored as the content of the
 corresponding file, where it can be conveniently retrieved by tag number,
@@ -299,7 +299,15 @@ convenient to use B<nam> with a tag number, as in,
 
 or to remove them all at once with
 
-  $ name rmall
+  $ nam rmall
+
+Use B<elide> for raw access to the same general-purpose string ellision
+functionality as described above, but without any filesystem-safe
+character transformations.  It involves no interaction with the
+filesystem at all.
+
+  $ nam elide 'The question is this: why and/or how?' 24s '**'
+  ** this: why and/or how?
 
 =head2 Portability
 
