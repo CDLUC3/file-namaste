@@ -4,5 +4,5 @@ Makefile.PL
 MANIFEST
 nam
 README
-t/namtest.t
+t/nam.t
 VERSION

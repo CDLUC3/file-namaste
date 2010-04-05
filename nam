@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 # .=who? xxx
+# num2label xxxx
 
 use 5.006;
 use strict;
@@ -66,7 +67,7 @@ my %opt = (
 	if ($cmd eq "add") {	# easiest, since don't need to check existence
 		@ARGV > 1 or
 			pod2usage("$cmd: needs at least two arguments");
-		($msg = set_namaste($dir, $opt{portable}, @ARGV)) and
+		($msg = nam_set($dir, $opt{portable}, @ARGV)) and
 			die $msg;
 		exit 0;
 	}
@@ -75,10 +76,10 @@ my %opt = (
 		pod2usage("$cmd what? (more arguments needed)")
 			if (@ARGV == 0);
 
-		# same args for command as for get_namaste()
+		# same args for command as for nam_get()
 		@nnv = ($delete
-			? get_namaste($dir, @ARGV)	# delete all args or
-			: get_namaste($dir, $ARGV[0]));	# just 1st for "set"
+			? nam_get($dir, @ARGV)		# delete all args or
+			: nam_get($dir, $ARGV[0]));	# just 1st for "set"
 		# @nnv may contain multiple tags (even for "set") to delete
 
 		while (defined($num = shift @nnv)) {
@@ -89,14 +90,14 @@ my %opt = (
 		}
 		$delete and		exit 0;		# since we're done
 		# "set" case
-		($msg = set_namaste($dir, $opt{portable}, @ARGV)) and
+		($msg = nam_set($dir, $opt{portable}, @ARGV)) and
 			die $msg;
 		exit 0;
 	}
 	elsif (($delete = $cmd eq "rmall") || $cmd eq "get") {
 
-		# same args for command as for get_namaste()
-		@nnv = get_namaste($dir, @ARGV);
+		# same args for command as for nam_get()
+		@nnv = nam_get($dir, @ARGV);
 		while (defined($num = shift @nnv)) {
 			$fname = shift @nnv;
 			$fvalue = shift @nnv;
@@ -112,8 +113,7 @@ my %opt = (
 		exit 0;
 	}
 	elsif ($cmd eq "elide") {
-		use File::Value;
-		$om->elem('elide', elide(@ARGV));
+		$om->elem('elide', nam_elide(@ARGV));
 		exit 0;
 	}
 	pod2usage("$cmd: unrecognized command");
