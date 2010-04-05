@@ -47,14 +47,15 @@ use File::Namaste;
 
 remake_td();
 
+my $portable = 0;
 my $namy = "noid_0.6";
-is set_namaste($td, 0, "pairtree_0.3"), "", 'short namaste tag';
-is set_namaste($td, 0, $namy), "", 'second, repeating namaste tag';
+is set_namaste($td, $portable, 0, "pairtree_0.3"), "", 'short namaste tag';
+is set_namaste($td, $portable, 0, $namy), "", 'second, repeating namaste tag';
 
 my $namx = "Whoa/dude:!
   Adventures of HuckleBerry Finn";
 
-is set_namaste($td, 1, $namx), "", 'longer stranger tag';
+is set_namaste($td, $portable, 1, $namx), "", 'longer stranger tag';
 
 my @namtags = get_namaste($td);
 ok scalar(@namtags) eq 9, 'got correct number of tags';
@@ -102,7 +103,7 @@ is $x, "", 'set of dir_type';
 #print "nam_cmd=$cmd\n", `ls -t`;
 
 $x = `$cmd get 0`;
-chop($x);
+chop($x);chop($x);
 is $x, "foo", 'get of dir_type';
 
 $x = `$cmd add 0 bar`;
@@ -110,7 +111,7 @@ chop($x);
 is $x, "", 'set extra dir_type';
 
 $x = `$cmd get 0`;
-chop($x);
+chop($x);chop($x);
 is $x, "bar
 foo", 'get of two dir_types';
 
@@ -119,7 +120,7 @@ chop($x);
 is $x, "", 'clear old dir_types, replace with new';
 
 $x = `$cmd get 0`;
-chop($x);
+chop($x);chop($x);
 is $x, "zaf", 'get of one new dir_type';
 
 $x = `$cmd set 1 'Mark Twain'`;
@@ -127,7 +128,7 @@ chop($x);
 is $x, "", 'set of "who"';
 
 $x = `$cmd get 1`;
-chop($x);
+chop($x);chop($x);
 is $x, "Mark Twain", 'get of "who"';
 
 $x = `$cmd set 2 'Adventures of Huckleberry Finn' 13m ___`;
@@ -135,7 +136,7 @@ chop($x);
 is $x, "", 'set of long "what" value, with elision';
 
 $x = `$cmd get 2`;
-chop($x);
+chop($x);chop($x);
 is $x, 'Adventures of Huckleberry Finn', 'get of long "what" value';
 
 $x = `$cmd -vm anvl get 2`;
@@ -148,6 +149,32 @@ like $x, '/2=Adven___ Finn -->/', 'get with long options and "xml" comment';
 
 $x = `$cmd rmall`;
 is $x, "", 'final nam rmall to clean out test dir';
+
+use File::Spec;
+# Default setting for tranformations is non-portable for Unix.
+# We use this to do conditional testing depending on platform.
+my $portable_default = grep(/Win32|OS2/i, @File::Spec::ISA);
+
+$x = `$cmd set 4 'ark:/13030/123'`;
+$x = `$cmd -v get 4`;
+chop($x);chop($x);
+if ($portable_default) {
+	like $x, '/4=ark\.=13030=123/', 'simple tvalue (Win32)';
+}
+else {
+	like $x, '/4=ark:=13030=123/', 'simple tvalue (Unix)';
+}
+
+$x = `$cmd --portable set 4 'ark:/13030/123'`;
+$x = `$cmd get -v 4`;
+chop($x);chop($x);
+like $x, '/4=ark\.=13030=123/', 'tvalue with --portable';
+
+$x = `$cmd --portable set 4 'ab
+c       d	"x*x/x:x<x>x?x|x\\x' 33`;
+$x = `$cmd get -v 4`;
+chop($x);chop($x);
+like $x, '/4=a.b c d .x.x=x.x.x.x.x.x.x/', 'garbage tvalue with --portable';
 
 remove_td();
 

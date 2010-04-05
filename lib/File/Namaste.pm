@@ -8,41 +8,75 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-0-17 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-0-20 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw(
 	get_namaste set_namaste
-);				# xxx more conservative export ??
+);				# yyy more conservative export ??
 our @EXPORT_OK = qw(
 );
 
-use File::Spec;
 use File::Value;
+use File::Spec;
 
-# xxx is this routine internal only?
-# XXX document which chars are eliminated
+# Default setting for tranformations is non-portable for Unix.
+our $portable_default = grep(/Win32|OS2/i, @File::Spec::ISA);
+
+# xxx not yet doing unicode or i18n
 # only first arg required
 # return tvalue given fvalue
-sub namaste_tvalue { my( $fvalue, $max, $ellipsis )=@_;
+sub namaste_tvalue { my( $fvalue, $portable, $max, $ellipsis )=@_;
 
+	defined($portable)	or $portable = $portable_default;
 	my $tvalue = $fvalue;
-	$tvalue =~ s,/,\\,g;
-	$tvalue =~ s,\n+, ,g;
-	$tvalue =~ s,\p{IsC},?,g;
-	# XXX if (windows) s/badwinchars/goodwinchars/
-	# XXX eg, $s =~ tr[<>:"/?*][.]
-	# XXX not yet doing unicode or i18n
+	$tvalue =~ s,/,=,g;
+	$tvalue =~ s,\s+, ,g;
+	$tvalue =~ s,\p{IsC},?,g;	# control characters
 
-	my $xx = elide($tvalue, $max, $ellipsis);
-	return $xx;
-	#return elide($tvalue, $max, $ellipsis);
+	$portable and			# more portable (Win32) mapping
+		$tvalue =~ tr {"*/:<>?|\\}{.};
+
+	return elide($tvalue, $max, $ellipsis);
+}
+
+# Ordered list of labels, mostly kernel element names
+#   yyy should this be coming from ERC module, or is that creating
+#   a big dependency hurdle for a sliver of functionality?
+our @namaste_labels = qw(
+	dir_type
+	who
+	what
+	when
+	where
+	how
+	why
+	huh
+);
+
+sub num2label { my $num = shift;
+
+	my $last = $#namaste_labels;
+	$num =~ s/^(\d+).*/$1/;				# forgive, eg, 3=foo
+	$num =~ /\D/ || $num < 0 || $num > $last and
+		return $namaste_labels[$last];		# last label
+		# last label doubles as unknown (huh?) if number is bad
+	return $namaste_labels[$num];			# normal return
 }
 
 my $dtname = ".dir_type";	# canonical name of directory type file
+# xxx .=dir_type
+# xxx .=how
+# xxx .=huh
+# xxx .=what
+# xxx .=when
+# xxx .=where
+# xxx .=who
+# xxx .=why
+
 
 # $num and $fvalue required
 # returns empty string on success, otherwise a diagnostic
-sub set_namaste { my( $dir, $num, $fvalue, $max, $ellipsis )=@_;
+sub set_namaste { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 
 	return 0
 		if (! defined($num) || ! defined($fvalue));
@@ -52,7 +86,7 @@ sub set_namaste { my( $dir, $num, $fvalue, $max, $ellipsis )=@_;
 		if $dir;		# (eg, slash) if there's a dir name
 
 	my $fname = $dir . $dtname;	# path to .dir_type, if needed
-	my $tvalue = namaste_tvalue($fvalue, $max, $ellipsis);
+	my $tvalue = namaste_tvalue($fvalue, $portable, $max, $ellipsis);
 	# ".0" means set .dir_type also; "." means only set .dir_type
 	if ($num =~ s/^\.0/0/ || $num eq ".") {
 		# "append only" supports multi-typing in .dir_type, so
@@ -62,7 +96,8 @@ sub set_namaste { my( $dir, $num, $fvalue, $max, $ellipsis )=@_;
 			if $ret || $num eq ".";
 	}
 
-	$fname = "$dir$num=" . namaste_tvalue($fvalue, $max, $ellipsis);
+	$fname = "$dir$num=" .
+		namaste_tvalue($fvalue, $portable, $max, $ellipsis);
 
 	return file_value(">$fname", $fvalue);
 }
@@ -125,25 +160,27 @@ File::Namaste - routines to manage NAMe-AS-TExt tags
 
 =head1 SYNOPSIS
 
- use File::Namaste;         # to import routines into a Perl script
+ use File::Namaste;  # to import routines into a Perl script
 
- $stat = set_namaste( $dir, $number, $fvalue, $max, $ellipsis )
-                            # Return empty string on success, else an
-                            # error message.  The first three arguments are
-                            # required; remaining args passed to elide().
-                            # Uses $dir or the current directory.
+ $stat =
+     set_namaste($dir, $portable, $number, $fvalue, $max, $ellipsis);
+                     # Return empty string on success, else an error
+                     # message.  The first four arguments required;
+                     # remaining args are passed to File::Value::elide().
+                     # Uses $dir or the current directory.  To get Win32
+                     # mapping, set $portable to 1.
 
  # Example: set the directory type and title tag files.
- ($msg = set_namaste(0, "dflat_0.4")
-          || set_namaste(2, "Crime and Punishment"))
+ ($msg = set_namaste(0, 0, "dflat_0.4")
+          || set_namaste(2, 0, "Crime and Punishment"))
      and die("set_namaste: $msg\n");
 
- @num_nam_val_triples = get_namaste( $dir, $filenameglob, ...)
-                            # Return an array of number/filename/value
-                            # triples (eg, every 3rd elem is number).
-			    # Args give numbers (as file globs) to fetch
-			    # (eg, "0" or "[1-4]") and no args is same as
-			    # "[0-9]".  Uses $dir or the current directory.
+ @num_nam_val_triples = get_namaste($dir, $filenameglob, ...);
+                     # Return an array of number/filename/value triples
+                     # (eg, every 3rd elem is number).  Args give numbers
+                     # (as file globs) to fetch # (eg, "0" or "[1-4]")
+                     # and no args is same as "[0-9]".  Uses $dir or the
+                     # current directory.
 
  # Example: fetch all namaste tags and print.
  my @nnv = get_namaste();
@@ -153,6 +190,9 @@ File::Namaste - routines to manage NAMe-AS-TExt tags
      print "Tag $num (from $fname): $fvalue\n";
  }
 
+ $transformed_value =       # filename-safe transform of metadata value
+      namaste_tvalue( $full_value, $portable, $max, $ellipsis);
+
 =head1 DESCRIPTION
 
 This is very brief documentation for the B<Namaste> Perl module, which
@@ -160,18 +200,16 @@ implements the Namaste (Name as Text) convention for containing a data
 element completely within the content of a file, using as filename an
 approximation of the value preceded by a numeric tag.
 
-The functions C<file_value()> and C<elide()> are general purpose and do
-not rely on Namaste; however, they are used by C<set_namaste()>
-and C<get_namaste()>.
-
 =head1 SEE ALSO
 
 Directory Description with Namaste Tags
-	L<http://www.cdlib.org/inside/diglib/namaste/namastespec.html>
+    L<https://confluence.ucop.edu/display/Curation/Namaste>
+
+L<nam(1p)>
 
 =head1 HISTORY
 
-This is an alpha version of Namaste tools.  It is written in Perl.
+This is a beta version of Namaste tools.  It is written in Perl.
 
 =head1 AUTHOR
 
@@ -179,7 +217,7 @@ John A. Kunze I<jak at ucop dot edu>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2009 UC Regents.  Open source Apache License, Version 2.
+Copyright 2009-2010 UC Regents.  Open source BSD license.
 
 =head1 PREREQUISITES
 
