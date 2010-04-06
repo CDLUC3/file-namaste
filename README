@@ -14,7 +14,7 @@ INSTALLATION
 
 If not already unpacked, unpack the suite with
 
-   tar xzf File-Namste-0.1.tar.gz
+   tar xzf File-Namaste-0.20.tar.gz
 
 after adjusting the version number as needed.  The current version is
 known to pass build tests on Linux, Solaris, Mac, and Windows systems.
@@ -29,28 +29,6 @@ To install the module and script, run the following commands:
 For the "make install" you may have to become the superuser, as in,
 
    sudo make install
-
-
-SUPPORT AND DOCUMENTATION
-
-After installing, you can find documentation for this module with the
-perldoc command.
-
-    perldoc File::Namaste
-
-You can also look for information at:
-
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-Namaste
-
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/File-Namaste
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/File-Namaste
-
-    Search CPAN
-        http://search.cpan.org/dist/File-Namaste/
 
 
 COPYRIGHT AND LICENSE

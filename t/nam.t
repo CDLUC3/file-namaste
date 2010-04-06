@@ -145,7 +145,7 @@ like $x, '/2=Adven___ Finn/', 'get filename with "-m anvl" and -v comment';
 
 $x = `$cmd --verbose --format xml get 2`;
 chop($x);
-like $x, '/2=Adven___ Finn -->/', 'get with long options and "xml" comment';
+like $x, '/2=Adven___ Finn-->/', 'get with long options and "xml" comment';
 
 $x = `$cmd rmall`;
 is $x, "", 'final nam rmall to clean out test dir';
