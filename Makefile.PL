@@ -20,7 +20,7 @@ WriteMakefile(
 	'Getopt::Long'	=> 0,
 	'Pod::Usage'	=> 0,
 	'File::Spec'	=> 0,
-	'File::Value'	=> 0.17,
+	'File::Value'	=> 0.20,
 	'File::OM'	=> 0.20,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

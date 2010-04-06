@@ -5,4 +5,5 @@ MANIFEST
 nam
 README
 t/nam.t
+t/elide.t
 VERSION
