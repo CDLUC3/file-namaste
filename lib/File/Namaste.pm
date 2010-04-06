@@ -63,6 +63,8 @@ sub num2label { my $num = shift;
 	return $namaste_labels[$num];			# normal return
 }
 
+# xxx should create shadow tag files with highly deterministic names?
+#     easier for a machine to fine a specific element
 my $dtname = ".dir_type";	# canonical name of directory type file
 # xxx .=dir_type
 # xxx .=how
@@ -188,7 +190,7 @@ sub nam_elide { my( $s, $max, $ellipsis )=@_;
 	#   if "e" then s/^(.....).*$/$1$ellipsis/
 	#   if "s" then s/^.*(.....)$/$ellipsis$1/
 	#   if "m" then s/^.*(...).*(..)$/$1$ellipsis$2/
-	# In order to make '.' match \n, we use the 's' modifier.
+	# In order to make '.' match \n, we use s///s ('s' modifier).
 	if ($where eq "m") {
 		# if middle, we split the string
 		my $half = int($left / 2);

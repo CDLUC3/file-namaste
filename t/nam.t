@@ -49,26 +49,26 @@ remake_td();
 
 my $portable = 0;
 my $namy = "noid_0.6";
-is set_namaste($td, $portable, 0, "pairtree_0.3"), "", 'short namaste tag';
-is set_namaste($td, $portable, 0, $namy), "", 'second, repeating namaste tag';
+is nam_set($td, $portable, 0, "pairtree_0.3"), "", 'short namaste tag';
+is nam_set($td, $portable, 0, $namy), "", 'second, repeating namaste tag';
 
 my $namx = "Whoa/dude:!
   Adventures of HuckleBerry Finn";
 
-is set_namaste($td, $portable, 1, $namx), "", 'longer stranger tag';
+is nam_set($td, $portable, 1, $namx), "", 'longer stranger tag';
 
-my @namtags = get_namaste($td);
+my @namtags = nam_get($td);
 ok scalar(@namtags) eq 9, 'got correct number of tags';
 
 is $namtags[8], $namx, 'read back longer stranger tag';
 
-is scalar(get_namaste($td, "9")), "0", 'no matching tags';
+is scalar(nam_get($td, "9")), "0", 'no matching tags';
 
-@namtags = get_namaste($td, "0");
+@namtags = nam_get($td, "0");
 is $namtags[2], $namy, 'read repeated namaste tag, which glob sorts first';
 
 my ($num, $fname, $fvalue, @nums);
-@namtags = get_namaste($td);
+@namtags = nam_get($td);
 while (defined($num = shift(@namtags))) {
 	$fname = shift(@namtags);
 	$fvalue = shift(@namtags);
@@ -77,7 +77,7 @@ while (defined($num = shift(@namtags))) {
 }
 is join(", ", @nums), "0, 0, 1", 'tag num sequence extracted from array';
 
-is scalar(get_namaste($td)), "0", 'tags all unlinked';
+is scalar(nam_get($td)), "0", 'tags all unlinked';
 
 #XXX need lots more tests
 

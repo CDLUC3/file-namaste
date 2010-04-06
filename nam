@@ -1,16 +1,8 @@
 #!/usr/bin/perl
 
-# .=who? xxx
 # xxx num2label
 # xxx list labels
 # xxx list dir_types
-# Additional types will be defined and may be submitted by sending email
-# to the author.  Submissions should conform to these guidelines to reduce
-# the need for lossy transformation when creating the
-# <spanx style="emph">tvalue</spanx>:  proposed strings
-# (<spanx style="emph">fvalue</spanx>s) should not exceed 16 characters in
-# length and should contain only letters, digits, underscores, periods, and
-# hyphens.
 
 use 5.006;
 use strict;
