@@ -282,7 +282,7 @@ deletion, and to "..." for 'm' deletion.
 Directory Description with Namaste Tags
     L<https://confluence.ucop.edu/display/Curation/Namaste>
 
-L<nam(1p)>
+L<nam(1)>
 
 =head1 HISTORY
 

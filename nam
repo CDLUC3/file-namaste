@@ -267,8 +267,8 @@ with "16s" truncation, the last line of the listing would look like
 Additional tags corresponding to an existing tag number can be created
 with B<add> (but all tags for a given number are replaced with B<set>):
 
-  $ nam add 2 Lennon
-  $ nam add 2 McCartney
+  $ nam add 1 Lennon
+  $ nam add 1 McCartney
 
 The verbatim metadata value (unabbreviated and not transformed to comply
 with filesystem naming rules) is stored as the content of the
@@ -296,7 +296,7 @@ JSON, XML, or ANVL:
   when: 1917
   where: ark:/13960/t50g49p5m
 
-Tag files can be always be removed with L<rm(1)>, but it is much more
+Tag files can always be removed with L<rm(1)>, but it is much more
 convenient to use B<nam> with a tag number, as in,
 
   $ nam rm 3
