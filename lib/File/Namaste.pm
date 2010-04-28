@@ -63,6 +63,7 @@ sub num2label { my $num = shift;
 	return $namaste_labels[$num];			# normal return
 }
 
+
 # xxx should create shadow tag files with highly deterministic names?
 #     easier for a machine to fine a specific element
 my $dtname = ".dir_type";	# canonical name of directory type file
@@ -75,6 +76,10 @@ my $dtname = ".dir_type";	# canonical name of directory type file
 # xxx .=who
 # xxx .=why
 
+# xxx to do
+# N means create N=...
+# .N means create or add to .=wh{o,at,en,ere}
+# N. means do both N and .N
 
 # $num and $fvalue required
 # returns empty string on success, otherwise a diagnostic
