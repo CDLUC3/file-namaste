@@ -135,7 +135,7 @@ $x = `$cmd get 0`;
 chop($x);chop($x);
 is $x, "zaf", 'get of one new dir_type';
 
-$x = `$cmd set 1 'Mark Twain'`;
+$x = `$cmd set 1 "Mark Twain"`;
 chop($x);
 is $x, "", 'set of "who"';
 
@@ -143,7 +143,7 @@ $x = `$cmd get 1`;
 chop($x);chop($x);
 is $x, "Mark Twain", 'get of "who"';
 
-$x = `$cmd set 2 'Adventures of Huckleberry Finn' 13m ___`;
+$x = `$cmd set 2 "Adventures of Huckleberry Finn" 13m ___`;
 chop($x);
 is $x, "", 'set of long "what" value, with elision';
 
@@ -167,7 +167,7 @@ use File::Spec;
 # We use this to do conditional testing depending on platform.
 my $portable_default = grep(/Win32|OS2/i, @File::Spec::ISA);
 
-$x = `$cmd set 4 'ark:/13030/123'`;
+$x = `$cmd set 4 "ark:/13030/123"`;
 $x = `$cmd -v get 4`;
 chop($x);chop($x);
 if ($portable_default) {
@@ -177,18 +177,17 @@ else {
 	like $x, '/4=ark:=13030=123/', 'simple tvalue (Unix)';
 }
 
-$x = `$cmd --portable set 4 'ark:/13030/123'`;
+$x = `$cmd --portable set 4 "ark:/13030/123"`;
 $x = `$cmd get -v 4`;
 chop($x);chop($x);
 like $x, '/4=ark\.=13030=123/', 'tvalue with --portable';
 
-$x = `$cmd --portable set 4 'ab
-c       d	"x*x/x:x<x>x?x|x\\x' 33`;
+$x = `$cmd --portable set 4 "ab c   d	'x*x/x:x<x>x?x|x\\x" 33`;
 $x = `$cmd get -v 4`;
 chop($x);chop($x);
 like $x, '/4=a.b c d .x.x=x.x.x.x.x.x.x/', 'garbage tvalue with --portable';
 
-$x = `$cmd elide 'The question is this: why and/or how?' 24s '**'`;
+$x = `$cmd elide "The question is this: why and/or how?" 24s '**'`;
 chop($x);chop($x);
 is $x, '** this: why and/or how?', 'raw interface to elide';
 

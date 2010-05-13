@@ -8,7 +8,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-0-22 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-0-23 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw(
 	nam_get nam_set nam_elide
