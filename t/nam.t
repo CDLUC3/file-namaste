@@ -59,12 +59,12 @@ use File::Namaste;
 
 remake_td();
 
-my $portable = 0;
+my $portable = undef;	# need undef (not 0) so $portable_default works
 my $namy = "noid_0.6";
 is nam_set($td, $portable, 0, "pairtree_0.3"), "", 'short namaste tag';
 is nam_set($td, $portable, 0, $namy), "", 'second, repeating namaste tag';
 
-my $namx = "Whoa/dude:!
+my $namx = "Test/line:!
   Adventures of HuckleBerry Finn";
 
 is nam_set($td, $portable, 1, $namx), "", 'longer stranger tag';
@@ -187,7 +187,7 @@ $x = `$cmd get -v 4`;
 chop($x);chop($x);
 like $x, '/4=a.b c d .x.x=x.x.x.x.x.x.x/', 'garbage tvalue with --portable';
 
-$x = `$cmd elide "The question is this: why and/or how?" 24s '**'`;
+$x = `$cmd elide "The question is this: why and/or how?" 24s "**"`;
 chop($x);chop($x);
 is $x, '** this: why and/or how?', 'raw interface to elide';
 

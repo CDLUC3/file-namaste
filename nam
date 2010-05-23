@@ -28,7 +28,8 @@ use File::Namaste;
 use File::OM;
 
 my %opt = (
-	portable	=> 0,
+	portable	=> undef,	# NOT 0 because we do defined()
+			# to see if $portable_default applies in Namaste.pm
 	help		=> 0,
 	man		=> 0,
 	version		=> 0,

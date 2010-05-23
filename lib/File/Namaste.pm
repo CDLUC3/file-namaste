@@ -8,7 +8,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-0-23 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-0-24 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw(
 	nam_get nam_set nam_elide
@@ -98,13 +98,15 @@ sub nam_set { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 	if ($num =~ s/^\.0/0/ || $num eq ".") {
 		# "append only" supports multi-typing in .dir_type, so
 		# caller must remove .dir_type to re-set (see "nam" script)
+		# right now $fname contains $dir . $dtname
 		my $ret = file_value(">>$fname", $fvalue);
 		return $ret		# return if error or only .dir_type
 			if $ret || $num eq ".";
 	}
 
-	$fname = "$dir$num=" .
-		nam_tvalue($fvalue, $portable, $max, $ellipsis);
+	$fname = "$dir$num=$tvalue";
+		#nam_tvalue($fvalue, $portable, $max, $ellipsis);
+		# why is this sometimes null?
 
 	return file_value(">$fname", $fvalue);
 }
