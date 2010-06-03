@@ -8,7 +8,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-0-24 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-0-25 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw(
 	nam_get nam_set nam_elide
@@ -16,11 +16,25 @@ our @EXPORT = qw(
 our @EXPORT_OK = qw(
 );
 
-use File::Value;
 use File::Spec;
 
 # Default setting for tranformations is non-portable for Unix.
 our $portable_default = grep(/Win32|OS2/i, @File::Spec::ISA);
+
+# Instead of "use File::Value;" for a small dependency, use this
+# abbreviated version of "raw" File::Value::file_value() (that we
+# also use commonly in test scripts).
+#
+sub filval { my( $file, $value )=@_;	# $file must begin with >, <, or >>
+	if ($file =~ /^\s*>>?/) {
+		open(OUT, $file)	or return "$file: $!";
+		my $r = print OUT $value;
+		close(OUT);		return ($r ? '' : "write failed: $!");
+	} # If we get here, we're doing file-to-value case.
+	open(IN, $file)		or return "$file: $!";
+	local $/;		$_[1] = <IN>;	# slurp mode (entire file)
+	close(IN);		return '';
+}
 
 # xxx not yet doing unicode or i18n
 # only first arg required
@@ -99,7 +113,7 @@ sub nam_set { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 		# "append only" supports multi-typing in .dir_type, so
 		# caller must remove .dir_type to re-set (see "nam" script)
 		# right now $fname contains $dir . $dtname
-		my $ret = file_value(">>$fname", $fvalue);
+		my $ret = filval(">>$fname", $fvalue);
 		return $ret		# return if error or only .dir_type
 			if $ret || $num eq ".";
 	}
@@ -108,7 +122,7 @@ sub nam_set { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 		#nam_tvalue($fvalue, $portable, $max, $ellipsis);
 		# why is this sometimes null?
 
-	return file_value(">$fname", $fvalue);
+	return filval(">$fname", $fvalue);
 }
 
 use File::Glob ':glob';		# standard use of module, which we need
@@ -147,7 +161,7 @@ sub nam_get {
 	my ($number, $fname, $fvalue, $status);
 	while (defined($fname = shift(@in))) {
 
-		$status = file_value("<$fname", $fvalue);
+		$status = filval("<$fname", $fvalue);
 
 		($number) = ($fname =~ m{^$dir(\d*)=});
 		# if there's no number matched, it may be for .dir_type,

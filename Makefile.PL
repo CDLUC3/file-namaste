@@ -8,7 +8,7 @@ WriteMakefile(
     NAME                => 'File::Namaste',
     AUTHOR              => 'John A. Kunze <jak@ucop.edu>',
     VERSION_FROM        => 'VERSION',
-    ABSTRACT            => '"nam" command and routines to manage NAMe-AS-TExt tags',
+    ABSTRACT            => 'nam (command) and routines to manage NAMe-AS-TExt tags',
     ($ExtUtils::MakeMaker::VERSION >= 6.3002
       ? ('LICENSE'=> 'BSD')
       : ()),
@@ -20,7 +20,6 @@ WriteMakefile(
 	'Getopt::Long'	=> 0,
 	'Pod::Usage'	=> 0,
 	'File::Spec'	=> 0,
-	'File::Value'	=> 0.20,
 	'File::OM'	=> 0.20,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
