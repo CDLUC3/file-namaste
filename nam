@@ -230,8 +230,8 @@ discussion about it (e.g., when using the content for schoolroom
 instruction or when notifying the collection manager of a system
 exception).
 
-The integers correspond to simple metadata as per Dublin Core Kernel
-metadata, roughly as follows:
+The integers correspond to simple metadata, mostly as per Dublin Core
+Kernel and roughly as follows:
 
   0   dir_type   directory type (e.g., bagit_0.97)
   1    who       creator (or contributor or publisher)
@@ -331,8 +331,8 @@ In creating filesystem-safe derivations of metadata values, lossy
 transformations may occur.  Since the primary beneficiaries of tag
 filenames are human, the default mapping for Unix systems tries to
 convert as few characters as possible.  It converts '/' to '=', runs of
-newlines and other whitespace to a single ' ', and control characters to
-'?'.
+newlines and other whitespace to a single SPACE, and control characters
+to '?'.
 
 The default mapping for Windows systems is more lossy but more portable
 than that for Unix.  Filenames created with it will remain unchanged when
