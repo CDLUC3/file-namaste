@@ -24,7 +24,7 @@ use Pod::Usage;
 # this :config allows -h24w80 for '‐h 24 ‐w 80', -vax for --vax or --Vax
 use Getopt::Long qw(:config bundling_override);
 
-use File::Namaste;
+use File::Namaste ':all';
 use File::OM;
 
 my %opt = (
@@ -79,7 +79,7 @@ my %opt = (
 	if ($cmd eq "add") {	# easiest, since don't need to check existence
 		@ARGV > 1 or
 			pod2usage("$cmd: needs at least two arguments");
-		($msg = nam_set($dir, $opt{portable}, @ARGV)) and
+		($msg = nam_add($dir, $opt{portable}, @ARGV)) and
 			die $msg;
 		exit 0;
 	}
@@ -102,7 +102,7 @@ my %opt = (
 		}
 		$delete and		exit 0;		# since we're done
 		# "set" case
-		($msg = nam_set($dir, $opt{portable}, @ARGV)) and
+		($msg = nam_add($dir, $opt{portable}, @ARGV)) and
 			die $msg;
 		exit 0;
 	}
@@ -179,9 +179,9 @@ nam - command to set, get, and remove Namaste tag files
 
 =over
 
-=item B<nam> [I<options>] B<set> I<N> I<string> [[I<maxlen>] I<ellipsis>]
-
 =item B<nam> [I<options>] B<add> I<N> I<string> [[I<maxlen>] I<ellipsis>]
+
+=item B<nam> [I<options>] B<set> I<N> I<string> [[I<maxlen>] I<ellipsis>]
 
 =item B<nam> [I<options>] B<get> [I<N> ...]
 
@@ -202,7 +202,7 @@ string.  The name of the file consists of an integer I<N>, an '=', and
 the derivative string.
 
 For example, consider a large collection of publically downloadable
-digital objects, each in a directory that looks something like
+digital objects, each one in a directory that looks something like
 
   $ ls
   m_abbyy.gz  m_djvu.txt   m_jp2.zip         m_meta.xml
@@ -211,9 +211,8 @@ digital objects, each in a directory that looks something like
   m.djvu      m.gif        m_metasource.xml  
 
 The directory layout reveals little to someone not already familiar with
-this kind of digital object object.  But if Namaste tags were added, a
-visitor who asks for a directory listing could be greeted by this
-instead:
+this kind of digital object.  But if Namaste tags were added, a visitor
+who asks for a directory listing could be greeted by this instead:
 
   $ ls
   0=oca_book_1.1          m_abbyy.gz  m_djvu.xml   m_meta.mrc
@@ -253,9 +252,9 @@ The optional "20" on the end of each command above specifies the maximum
 width of a created tag name.  Any filename that would be longer will be
 truncated and the missing part replaced by an ellipsis, which could have
 been given as a final optional argument.  The maximum length (default 16)
-can be adjusted according to the desired "greeting" experience.  For
-example, changing the "20" to "16m" in all the above settings would leave
-more display space for proper files.
+can be adjusted according to the desired "greeting" experience, or given
+as 0 to prevent truncation.  For example, changing the "20" to "16m" in
+all the above settings would leave more display space for proper files.
 
   $ ls
   0=oca_book_1.1      m_abbyy.gz  m_djvu.xml   m_meta.mrc

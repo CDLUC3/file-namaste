@@ -8,13 +8,16 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-0-25 $ =~ /Release-(\d+)-(\d+)/;
+#$VERSION = sprintf "%d.%02d", q$Name: Release-0-25 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%s", q$Name: Release-v0.262.0$ =~ /Release-(v\d+\.\d+\.\d+)/;
 
-our @EXPORT = qw(
-	nam_get nam_set nam_elide
-);				# yyy more conservative export ??
+our @EXPORT = qw();
+#our @EXPORT_OK = qw();
 our @EXPORT_OK = qw(
+	nam_get nam_add nam_elide
 );
+our %EXPORT_TAGS = (all => [ @EXPORT_OK ]);
+#our @EXPORT_OK = qw();
 
 use File::Spec;
 
@@ -97,7 +100,7 @@ my $dtname = ".dir_type";	# canonical name of directory type file
 
 # $num and $fvalue required
 # returns empty string on success, otherwise a diagnostic
-sub nam_set { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
+sub nam_add { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 
 	return 0
 		if (! defined($num) || ! defined($fvalue));
@@ -180,7 +183,8 @@ our $max_default = 16;		# is there some sense to this? xxx use
 sub nam_elide { my( $s, $max, $ellipsis )=@_;
 
 	$s	or return undef;
-	$max ||= $max_default;
+	# $max can be zero (0) so that nam_add() can ask for no elision.
+	defined($max)		or $max = $max_default;
 	$max !~ /^(\d+)([esmESM]*)([+-]\d+%?)?$/ and
 		return undef;
 	my ($maxlen, $where, $tweak) = ($1, $2, $3);
@@ -200,7 +204,7 @@ sub nam_elide { my( $s, $max, $ellipsis )=@_;
 
 	my $slen = length($s);
 	return $s
-		if ($slen <= $maxlen);	# doesn't need elision
+		if ($slen <= $maxlen || $maxlen == 0);	# doesn't need elision
 
 	my $re;		# we will create a regex to edit the string
 	# length of orig string after that will be left after edit
@@ -247,7 +251,7 @@ File::Namaste - routines to manage NAMe-AS-TExt tags
 
  use File::Namaste;  # to import routines into a Perl script
 
- $stat = nam_set($dir, $portable, $number, $fvalue, $max, $ellipsis);
+ $stat = nam_add($dir, $portable, $number, $fvalue, $max, $ellipsis);
                      # Return empty string on success, else an error
                      # message.  The first four arguments required;
                      # remaining args are passed to nam_elide().
@@ -257,9 +261,9 @@ File::Namaste - routines to manage NAMe-AS-TExt tags
 		     # Win32 mapping, set $portable to 1.
 
  # Example: set the directory type and title tag files.
- ($msg = nam_set(0, 0, "dflat_0.4")
-          || nam_set(2, 0, "Crime and Punishment"))
-     and die("nam_set: $msg\n");
+ ($msg = nam_add(0, 0, "dflat_0.4")
+          || nam_add(2, 0, "Crime and Punishment"))
+     and die("nam_add: $msg\n");
 
  @num_nam_val_triples = nam_get($dir, $filenameglob, ...);
                      # Return an array of number/filename/value triples
