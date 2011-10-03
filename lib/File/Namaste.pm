@@ -8,8 +8,8 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-#$VERSION = sprintf "%d.%02d", q$Name: Release-0-25 $ =~ /Release-(\d+)-(\d+)/;
-$VERSION = sprintf "%s", q$Name: Release-v0.262.0$ =~ /Release-(v\d+\.\d+\.\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-1-00 $ =~ /Release-(\d+)-(\d+)/;
+#$VERSION = sprintf "%s", q$Name: Release-v0.262.0$ =~ /Release-(v\d+\.\d+\.\d+)/;
 
 our @EXPORT = qw();
 #our @EXPORT_OK = qw();
