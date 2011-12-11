@@ -8,8 +8,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-1-00 $ =~ /Release-(\d+)-(\d+)/;
-#$VERSION = sprintf "%s", q$Name: Release-v0.262.0$ =~ /Release-(v\d+\.\d+\.\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-1-01 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw();
 #our @EXPORT_OK = qw();
@@ -19,7 +18,7 @@ our @EXPORT_OK = qw(
 our %EXPORT_TAGS = (all => [ @EXPORT_OK ]);
 #our @EXPORT_OK = qw();
 
-use File::Spec;
+use File::Spec::Functions;		# we want catfile()
 
 # Default setting for tranformations is non-portable for Unix.
 our $portable_default = grep(/Win32|OS2/i, @File::Spec::ISA);
@@ -106,22 +105,24 @@ sub nam_add { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 		if (! defined($num) || ! defined($fvalue));
 
 	$dir ||= "";
-	$dir = File::Spec->catfile($dir, "")	# add portable separator
-		if $dir;		# (eg, slash) if there's a dir name
+	#$dir = catfile($dir, "")	# add portable separator
+	#	if $dir;		# (eg, slash) if there's a dir name
 
-	my $fname = $dir . $dtname;	# path to .dir_type, if needed
+	#my $fname = $dir . $dtname;	# path to .dir_type, if needed
+	my $fname = catfile($dir, $dtname);	# path to .dir_type, if needed
 	my $tvalue = nam_tvalue($fvalue, $portable, $max, $ellipsis);
 	# ".0" means set .dir_type also; "." means only set .dir_type
 	if ($num =~ s/^\.0/0/ || $num eq ".") {
 		# "append only" supports multi-typing in .dir_type, so
 		# caller must remove .dir_type to re-set (see "nam" script)
-		# right now $fname contains $dir . $dtname
+		# right now $fname contains catfile($dir, $dtname)
 		my $ret = filval(">>$fname", $fvalue);
 		return $ret		# return if error or only .dir_type
 			if $ret || $num eq ".";
 	}
 
-	$fname = "$dir$num=$tvalue";
+	#$fname = "$dir$num=$tvalue";
+	$fname = catfile($dir, "$num=$tvalue");
 		#nam_tvalue($fvalue, $portable, $max, $ellipsis);
 		# why is this sometimes null?
 
@@ -140,36 +141,43 @@ sub nam_get {
 	my $dir = shift @_;
 
 	$dir ||= "";
-	$dir = File::Spec->catfile($dir, "")	# add portable separator
-		if $dir;		# (eg, slash) if there's a dir name
-	my $dir_type = $dir . $dtname;	# path to .dir_type, if needed
+	#$dir = catfile($dir, "")	# add portable separator
+	#	if $dir;		# (eg, slash) if there's a dir name
+	#my $dir_type = $dir . $dtname;	# path to .dir_type, if needed
+	my $dir_type = catfile($dir, $dtname);	# path to .dir_type, if needed
 
 	my (@in, @out);
 	if ($#_ < 0) {			# if no args, get all files starting
-		@in = bsd_glob($dir . '[0-9]=*');	# "<digit>=..."
+	#	@in = bsd_glob($dir . '[0-9]=*');	# "<digit>=..."
+		@in = bsd_glob(catfile($dir, '[0-9]=*'));	# "<digit>=..."
 		-e $dir_type and		# since we're getting all,
 			unshift @in, $dir_type;	# if it exists, add .dir_type
 	}
 	else {				# else do globs for each arg
-		while (defined($_ = shift @_)) {
-			if ((s/^\.0/0/ || $_ eq ".") && -e $dir_type) {
+		while (defined(my $n = shift @_)) {	# next number
+			if (($n =~ s/^\.0/0/ || $n eq ".") && -e $dir_type) {
 				# if requested and it exists, add .dir_type
 				push @in, $dir_type;
 				next		# next if only .dir_type
-					if $_ eq ".";
+					if $n eq ".";
 			}
-			push @in, bsd_glob($dir . $_ . '=*')
+			#push @in, bsd_glob($dir . $_ . '=*')
+			push @in, bsd_glob(catfile($dir, $n . '=*'));
 		}
 	}
-	my ($number, $fname, $fvalue, $status);
+	my ($number, $fname, $fvalue, $status, $regex);
 	while (defined($fname = shift(@in))) {
 
 		$status = filval("<$fname", $fvalue);
 
-		($number) = ($fname =~ m{^$dir(\d*)=});
+		#($number) = ($fname =~ m{^$dir(\d*)=});
+		$regex = catfile($dir, '(\d*)=');
+		($number) = ($fname =~ m{^$regex});
 		# if there's no number matched, it may be for .dir_type,
 		# in which case use "." for number, else give up with ""
-		$number = ($fname =~ m{^$dir$dtname} ? "." : "")
+		#$number = ($fname =~ m{^$dir$dtname} ? "." : "")
+		$regex = catfile($dir, $dtname);
+		$number = ($fname =~ m{^$regex} ? "." : "")
 			if (! defined($number));
 		push @out, $number, $fname, ($status ? $status : $fvalue);
 	}

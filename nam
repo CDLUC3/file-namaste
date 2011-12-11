@@ -150,8 +150,8 @@ from that value.  N specifies Dublin Core Kernel metadata elements, roughly:
 
      0   dir_type   directory type (e.g., bagit_0.97)
      1    who       creator (or contributor or publisher)
-     2    what      title
-     3    when      date of creation or last revision
+     2    what      title (human-oriented name or identifier)
+     3    when      date of creation or collection of content
      4    where     machine-oriented identifier
 
 Commands (set, add, get, rm) act as you would expect, but "rmall" removes
@@ -234,8 +234,8 @@ Kernel and roughly as follows:
 
   0   dir_type   directory type (e.g., bagit_0.97)
   1    who       creator (or contributor or publisher)
-  2    what      title
-  3    when      date of creation or last revision
+  2    what      title (human-oriented name or identifier)
+  3    when      date of creation or collection of content
   4    where     machine-oriented identifier
 
 Setting the above Namaste tags was done with
@@ -296,7 +296,7 @@ or all at once with
   1917
   ark:/13960/t50g49p5m
 
-A fully labeled record can be rerieved by specifying a format such as
+A fully labeled record can be retrieved by specifying a format such as
 JSON, XML, or ANVL:
 
   $ name --format anvl get > Namaste.txt
