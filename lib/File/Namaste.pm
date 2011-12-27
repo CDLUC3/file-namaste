@@ -8,7 +8,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-1-01 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-1-02 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw();
 #our @EXPORT_OK = qw();
@@ -171,12 +171,18 @@ sub nam_get {
 		$status = filval("<$fname", $fvalue);
 
 		#($number) = ($fname =~ m{^$dir(\d*)=});
-		$regex = catfile($dir, '(\d*)=');
+		#$regex = catfile($dir, '(\d*)=');
+		# ask for a dummy file 'x' in order to get a dir separator
+		$regex = catfile($dir, 'x');	# separator might be \ or /
+		$regex =~ s/\\/\\\\/g;	# preserve any \ separators for regex
+		# replace dummy file with pattern we want, leaving separator
+		$regex =~ s/x$/(\\d*)=/;	# replace with literal pattern
 		($number) = ($fname =~ m{^$regex});
 		# if there's no number matched, it may be for .dir_type,
 		# in which case use "." for number, else give up with ""
 		#$number = ($fname =~ m{^$dir$dtname} ? "." : "")
 		$regex = catfile($dir, $dtname);
+		$regex =~ s/\\/\\\\/g;	# preserve any \ separators for regex
 		$number = ($fname =~ m{^$regex} ? "." : "")
 			if (! defined($number));
 		push @out, $number, $fname, ($status ? $status : $fvalue);

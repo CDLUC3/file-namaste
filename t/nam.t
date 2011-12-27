@@ -70,7 +70,7 @@ my $namx = "Test/line:!
 is nam_add($td, $portable, 1, $namx), "", 'longer stranger tag';
 
 my @namtags = nam_get($td);
-ok scalar(@namtags) eq 9, 'got correct number of tags';
+is scalar(@namtags), "9", 'got correct number of tags';
 
 is $namtags[8], $namx, 'read back longer stranger tag';
 
