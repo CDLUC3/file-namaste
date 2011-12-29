@@ -8,7 +8,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our $VERSION;
-$VERSION = sprintf "%d.%02d", q$Name: Release-1-02 $ =~ /Release-(\d+)-(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Name: Release-1-03 $ =~ /Release-(\d+)-(\d+)/;
 
 our @EXPORT = qw();
 #our @EXPORT_OK = qw();
@@ -172,19 +172,36 @@ sub nam_get {
 
 		#($number) = ($fname =~ m{^$dir(\d*)=});
 		#$regex = catfile($dir, '(\d*)=');
+
 		# ask for a dummy file 'x' in order to get a dir separator
+		#
 		$regex = catfile($dir, 'x');	# separator might be \ or /
+# temporary crap to flush out bug in Windows version
+#$regex =~ s,/,\\,g;
+#$fname =~ s,/,\\,g;
 		$regex =~ s/\\/\\\\/g;	# preserve any \ separators for regex
+
 		# replace dummy file with pattern we want, leaving separator
+		#
 		$regex =~ s/x$/(\\d*)=/;	# replace with literal pattern
+#print "xxx regex=$regex\n";
 		($number) = ($fname =~ m{^$regex});
+#print "xxx number=$number, fname=$fname\n";
+
 		# if there's no number matched, it may be for .dir_type,
 		# in which case use "." for number, else give up with ""
-		#$number = ($fname =~ m{^$dir$dtname} ? "." : "")
+		#
 		$regex = catfile($dir, $dtname);
+#$regex =~ s,/,\\,g;
 		$regex =~ s/\\/\\\\/g;	# preserve any \ separators for regex
+#print "xxx dtname=$dtname, regex=$regex\n";
+		#$number = ($fname =~ m{^$dir$dtname} ? "." : "")
+		# yyy matching on $dtname is imperfect if it contains
+		#     a '.' -- eg, ".dir_type" matches "adir_type"
+		# contains a
 		$number = ($fname =~ m{^$regex} ? "." : "")
 			if (! defined($number));
+
 		push @out, $number, $fname, ($status ? $status : $fvalue);
 	}
 	return @out;
