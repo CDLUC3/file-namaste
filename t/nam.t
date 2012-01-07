@@ -69,21 +69,25 @@ my $namx = "Test/line:!
 
 is nam_add($td, $portable, 1, $namx), "", 'longer stranger tag';
 
-   # fake tests to see what happens on Windows
-
-   use File::Spec::Functions;
-   use File::Glob ':glob';	# standard use of module, which we need
-				# as vanilla glob won't match whitespace
-   my @in = bsd_glob(catfile($td, '[0-9]=*'));
-   like join(", ", @in), qr,td_nam/0=,, 'blob got some files';
-
-   my $x = opendir(my $dh, $td);
-   is 1, $x, "opendir on $td";
-
-   my @dots = readdir($dh);
-   closedir $dh;
-   like join(", ", map({catfile($td, $_)} @dots)), qr,td_nam/.*=Test,,
-   	'readdir on $td';
+#   # fake tests to see what happens on Windows
+#
+#   use File::Spec::Functions;
+#   use File::Glob ':glob';	# standard use of module, which we need
+#				# as vanilla glob won't match whitespace
+#   my @in = bsd_glob("$td/[0-9]=*");
+#   like join(", ", @in), qr,td_nam,,
+#   	'glob with / got some files, even on Windows';
+#
+#   #my @in = bsd_glob(catfile($td, '[0-9]=*'));
+#   #like join(", ", @in), qr,td_nam/0=,, 'blob got some files';
+#
+#   my $x = opendir(my $dh, $td);
+#   is 1, $x, "opendir on $td";
+#
+#   my @dots = readdir($dh);
+#   closedir $dh;
+#   like join(", ", map({catfile($td, $_)} @dots)), qr,td_nam/.*=Test,,
+#   	'readdir on $td';
 
 my @namtags = nam_get($td);
 is scalar(@namtags), "9", 'got correct number of tags';
