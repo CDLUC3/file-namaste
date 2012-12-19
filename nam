@@ -201,8 +201,8 @@ metadata string and its name is a filesystem-safe derivation of that
 string.  The name of the file consists of an integer I<N>, an '=', and
 the derivative string.
 
-For example, consider a large collection of publically downloadable
-digital objects, each one in a directory that looks something like
+For example, consider a collection of digital objects without Namaste
+tags, each one in a directory that looks something like
 
   $ ls
   m_abbyy.gz  m_djvu.txt   m_jp2.zip         m_meta.xml
@@ -262,7 +262,7 @@ all the above settings would leave more display space for proper files.
   2=Lincol...address  m_dc.xml    m.gif        m_meta.xml
   3=1917              m.djvu      m_jp2.zip    m_orig_jp2.tar
   4=ark:=1...0g49p5m  m_djvu.txt  m_marc.xml   m.pdf
-  
+
 In this case, the "m" in "16m" specifies truncation in the middle of the
 string, as opposed to "s" (start) or "e" (end, the default).  The
 ellipsis normally defaults to "..", but for middle truncation it defaults
