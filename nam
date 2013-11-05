@@ -70,7 +70,8 @@ my %opt = (
 	my $om = File::OM->new($format, \%om_opt) or
 		pod2usage("$0: unknown format: $format");
 
-	my $dir = $opt{directory} || "";
+	#my $dir = $opt{directory} || "";
+	my $dir = $opt{directory};
 
 	my $cmd = lc shift @ARGV;
 	my ($num, $fname, $fvalue, $msg, @nnv);

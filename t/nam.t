@@ -121,6 +121,7 @@ remove_td();
 # XXX need more -m tests
 # xxx need -d tests
 remake_td();
+my $origcmd = $cmd;
 $cmd .= " -d $td ";
 
 my $x;
@@ -131,6 +132,11 @@ is $x, "", 'nam rmall to clean out test dir';
 $x = `$cmd set 0 foo`;
 chop($x);
 is $x, "", 'set of dir_type';
+
+# XXXX make this work?
+#my $y;
+#$x = filval('< 0=foo', $y);
+#is $y , "foo\n", 'stored value has newline';
 
 #print "nam_cmd=$cmd\n", `ls -t`;
 
@@ -219,6 +225,14 @@ like $x, '/4=a.b c d .x.x=x.x.x.x.x.x.x/', 'garbage tvalue with --portable';
 $x = `$cmd elide "The question is this: why and/or how?" 24s "**"`;
 chop($x);chop($x);
 is $x, '** this: why and/or how?', 'raw interface to elide';
+
+# XXX how to test safely without -d arg??
+#$x = chdir($td) || 1;
+#is $x, 1, 'chdir succeeded';
+#
+#$x = `$origcmd set 0 foo`;
+#chop($x);
+#is $x, "", 'set of dir_type without -d';
 
 remove_td();
 

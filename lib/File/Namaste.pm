@@ -1,3 +1,6 @@
+# XXX would be more user friendly if tags are created terminated by a
+# newline so that 'cat 3=...' worked nicely
+
 package File::Namaste;
 
 use 5.006;
@@ -104,7 +107,8 @@ sub nam_add { my( $dir, $portable, $num, $fvalue, $max, $ellipsis )=@_;
 	return 0
 		if (! defined($num) || ! defined($fvalue));
 
-	$dir ||= "";
+	$dir ||= curdir();		# more portable than "."
+	#$dir ||= "";
 	#$dir = catfile($dir, "")	# add portable separator
 	#	if $dir;		# (eg, slash) if there's a dir name
 
